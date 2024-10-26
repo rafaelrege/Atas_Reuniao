@@ -11,6 +11,7 @@ click==8.1.7
 colorama==0.4.6
 decorator==4.4.2
 distro==1.9.0
+et_xmlfile==2.0.0
 gitdb==4.0.11
 GitPython==3.1.43
 h11==0.14.0
@@ -31,6 +32,7 @@ moviepy==1.0.3
 narwhals==1.10.0
 numpy==2.1.2
 openai==1.52.2
+openpyxl==3.1.5
 packaging==24.1
 pandas==2.2.3
 pillow==10.4.0
