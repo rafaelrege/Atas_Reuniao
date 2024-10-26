@@ -6,7 +6,7 @@ from openai import OpenAI
 import fitz  # PyMuPDF para manipulação de PDFs
 import pytesseract  # Para OCR de imagens
 import pandas as pd  # Para manipulação de arquivos Excel
-pytesseract.pytesseract.tesseract_cmd = r'Tesseract-OCR\tesseract.exe'
+# pytesseract.pytesseract.tesseract_cmd = r'Tesseract-OCR\tesseract.exe'
 from PIL import Image  # Para manipulação de imagens extraídas
 import io
 import docx  # Para manipulação de arquivos .docx (Word)
