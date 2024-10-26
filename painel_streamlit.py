@@ -6,7 +6,7 @@ from openai import OpenAI
 import fitz  # PyMuPDF para manipulação de PDFs
 import pytesseract  # Para OCR de imagens
 import pandas as pd  # Para manipulação de arquivos Excel
-# pytesseract.pytesseract.tesseract_cmd = r'Tesseract-OCR\tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = r'Tesseract-OCR\tesseract.exe'
 from PIL import Image  # Para manipulação de imagens extraídas
 import io
 import docx  # Para manipulação de arquivos .docx (Word)
@@ -57,10 +57,13 @@ def extract_text_from_excel(excel_filename):
     text = data.to_string(index=False)  # Converte o conteúdo do Excel para uma string legível
     return text
 
-st.title('Automação de atas')
-st.write('Criando uma ferramenta de automação de atas de reunião com tecnologia de IA com Python')
+st.title('Oráculo das IAs')
+st.write('Criando uma ferramenta de consulta de IAs e arquivos')
 
 uploaded_file = st.file_uploader("Selecione o seu arquivo", accept_multiple_files=False, type=['mp4', 'pdf', 'docx', 'xlsx'])
+
+# Variável para armazenar o texto extraído
+texto_transcrito = ""
 
 if uploaded_file:
     file_extension = uploaded_file.name.split('.')[-1].lower()
@@ -82,7 +85,6 @@ if uploaded_file:
             config = aai.TranscriptionConfig(speaker_labels=True, speakers_expected=2, language_code='pt')
             transcricao = transcriber.transcribe(mp3_filename, config=config)
 
-            texto_transcrito = ""
             for sentenca in transcricao.utterances:
                 texto_transcrito += f"Pessoa {sentenca.speaker}: {sentenca.text}\n"
             st.text_area('Transcrição', texto_transcrito)
@@ -121,10 +123,14 @@ if uploaded_file:
             st.text_area('Texto extraído do Excel', texto_transcrito)
         st.success("Texto extraído do arquivo Excel!")
 
-    with st.spinner('Gerando ata de reunião'):
-        prompt_system = 'Você é um ótimo gerente de projetos com grandes capacidades de criação de atas de reunião'
-        prompt_text = 'Em uma redação de nível especializado, resuma as notas da reunião em um único parágrafo. Em seguida, escreva uma lista de cada um de seus pontos-chaves tratados na reunião. Por fim, liste as próximas etapas ou itens de ação sugeridos pelos palestrantes, se houver.'
-        prompt_text += '===========\n' + texto_transcrito
+    # Campos para o prompt
+    prompt_system = st.text_area('Contexto', 'Você é um ótimo gerente de projetos com grandes capacidades de criação de atas de reunião')
+    prompt_text = st.text_area('Pergunta', 'Em uma redação de nível especializado, resuma as notas da reunião em um único parágrafo. Em seguida, escreva uma lista de cada um de seus pontos-chaves tratados na reunião. Por fim, liste as próximas etapas ou itens de ação sugeridos pelos palestrantes, se houver.')
 
-        texto_retorno = generate_response(prompt_system, prompt_text)
-        st.markdown(texto_retorno)
+    if texto_transcrito:  # Verifica se há texto transcrito antes de exibir o botão
+        if st.button('Gerar pergunta para IA'):
+            with st.spinner('Gerando resposta da IA'):
+                prompt_text += '===========\n' + texto_transcrito
+
+                texto_retorno = generate_response(prompt_system, prompt_text)
+                st.markdown(texto_retorno)
